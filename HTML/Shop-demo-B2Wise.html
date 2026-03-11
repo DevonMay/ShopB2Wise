@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ShopB2Wise â€” Robot Framework Demo Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --cream:#faf7f2;
+  --warm:#f0e9de;
+  --ink:#1c1712;
+  --ink2:#6b6259;
+  --border:#e0d8ce;
+  --accent:#c45c2a;
+  --accent-light:#f5e6df;
+  --green:#2a7c4f;
+  --green-light:#dff0e8;
+  --red:#b83232;
+  --red-light:#fde8e8;
+  --card:#ffffff;
+  --shadow:0 2px 12px rgba(28,23,18,0.08);
+  --shadow-lg:0 8px 32px rgba(28,23,18,0.14);
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;
+}
+
+/* â”€â”€ NAV â”€â”€ */
+nav{
+  background:var(--ink);
+  padding:0 2.5rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  height:64px;
+  position:sticky;
+  top:0;
+  z-index:200;
+}
+.logo{
+  font-family:'Playfair Display',serif;
+  font-size:1.4rem;
+  font-weight:900;
+  color:var(--cream);
+  letter-spacing:-0.02em;
+}
+.logo span{color:var(--green);font-style:italic}
+
+.nav-right{display:flex;align-items:center;gap:1.5rem}
+
+.cart-btn{
+  background:var(--green);
+  color:#fff;
+  border:none;
+  padding:0.55rem 1.2rem;
+  border-radius:2px;
+  font-family:'DM Sans',sans-serif;
+  font-size:0.82rem;
+  font-weight:500;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  transition:all 0.2s;
+  text-decoration:none;
+}
+.cart-btn:hover{background:#a84c22;transform:translateY(-1px)}
+
+.cart-badge{
+  background:#fff;
+  color:var(--accent);
+  border-radius:50%;
+  width:20px;
+  height:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.7rem;
+  font-weight:700;
+  transition:transform 0.2s;
+}
+.cart-badge.bump{animation:bump 0.3s ease}
+@keyframes bump{0%{transform:scale(1)}50%{transform:scale(1.4)}100%{transform:scale(1)}}
+
+/* â”€â”€ PAGE LAYOUT â”€â”€ */
+.page-wrap{
+  max-width:1200px;
+  margin:0 auto;
+  padding:2.5rem 2rem;
+}
+
+/* â”€â”€ SECTION HEADER â”€â”€ */
+.section-head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  margin-bottom:2rem;
+}
+.section-head h1{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;
+  font-weight:700;
+  letter-spacing:-0.02em;
+}
+.section-head .sub{
+  font-size:0.78rem;
+  color:var(--ink2);
+}
+
+/* â”€â”€ PRODUCT GRID â”€â”€ */
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:1.5rem;
+  margin-bottom:4rem;
+}
+
+.product-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  box-shadow:var(--shadow);
+  transition:box-shadow 0.25s, transform 0.25s;
+  display:flex;
+  flex-direction:column;
+}
+.product-card:hover{
+  box-shadow:var(--shadow-lg);
+  transform:translateY(-3px);
+}
+
+.product-img{
+  width:100%;
+  aspect-ratio:1/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:3.5rem;
+  background:var(--warm);
+  position:relative;
+  overflow:hidden;
+}
+.product-img::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.3) 0%,transparent 60%);
+}
+
+.product-info{
+  padding:1rem 1.1rem;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:0.4rem;
+}
+
+.product-name{
+  font-family:'Playfair Display',serif;
+  font-size:1rem;
+  font-weight:700;
+  line-height:1.3;
+}
+
+.product-desc{
+  font-size:0.73rem;
+  color:var(--ink2);
+  line-height:1.5;
+  flex:1;
+}
+
+.product-price{
+  font-size:1.1rem;
+  font-weight:500;
+  color:var(--green);
+  margin-top:0.3rem;
+}
+
+.product-actions{
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  padding:0.8rem 1.1rem;
+  border-top:1px solid var(--border);
+  background:var(--cream);
+}
+
+.qty-wrap{
+  display:flex;
+  align-items:center;
+  border:1.5px solid var(--border);
+  border-radius:2px;
+  overflow:hidden;
+}
+
+.qty-btn{
+  background:var(--warm);
+  border:none;
+  width:30px;
+  height:30px;
+  cursor:pointer;
+  font-size:1rem;
+  color:var(--ink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:background 0.15s;
+  font-family:'DM Sans',sans-serif;
+}
+.qty-btn:hover{background:var(--border)}
+
+.qty-input{
+  width:36px;
+  height:30px;
+  border:none;
+  border-left:1.5px solid var(--border);
+  border-right:1.5px solid var(--border);
+  text-align:center;
+  font-family:'DM Sans',sans-serif;
+  font-size:0.85rem;
+  font-weight:500;
+  background:#fff;
+  color:var(--ink);
+  outline:none;
+}
+
+.add-btn{
+  flex:1;
+  background:var(--ink);
+  color:var(--cream);
+  border:none;
+  border-radius:2px;
+  padding:0.5rem 0.8rem;
+  font-family:'DM Sans',sans-serif;
+  font-size:0.75rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:all 0.2s;
+  letter-spacing:0.02em;
+}
+.add-btn:hover{background:var(--accent)}
+.add-btn.added{background:var(--green);animation:addedFlash 0.4s ease}
+@keyframes addedFlash{0%{transform:scale(1)}50%{transform:scale(0.96)}100%{transform:scale(1)}}
+
+/* â”€â”€ CART SECTION â”€â”€ */
+.cart-section{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:4px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+
+.cart-header{
+  background:var(--ink);
+  color:var(--cream);
+  padding:1rem 1.5rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.cart-header h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.2rem;
+  font-weight:700;
+}
+
+.clear-all-btn{
+  background:transparent;
+  color:#ff9988;
+  border:1px solid #ff9988;
+  padding:0.35rem 0.9rem;
+  border-radius:2px;
+  font-family:'DM Sans',sans-serif;
+  font-size:0.72rem;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.clear-all-btn:hover{background:#ff9988;color:var(--ink)}
+
+/* Cart empty */
+.cart-empty{
+  padding:3rem;
+  text-align:center;
+  color:var(--ink2);
+}
+.cart-empty .empty-icon{font-size:3rem;margin-bottom:0.8rem}
+.cart-empty p{font-size:0.85rem}
+
+/* Cart table */
+.cart-table{width:100%;border-collapse:collapse}
+
+.cart-table thead th{
+  background:var(--warm);
+  padding:0.7rem 1.2rem;
+  text-align:left;
+  font-size:0.65rem;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ink2);
+  border-bottom:1px solid var(--border);
+}
+.cart-table thead th:last-child{text-align:right}
+
+.cart-row{
+  border-bottom:1px solid var(--border);
+  transition:background 0.15s;
+}
+.cart-row:last-child{border-bottom:none}
+.cart-row:hover{background:var(--cream)}
+.cart-row.removing{
+  animation:slideOut 0.3s ease forwards;
+}
+@keyframes slideOut{
+  to{opacity:0;transform:translateX(20px);max-height:0;padding:0}
+}
+
+.cart-table td{
+  padding:0.9rem 1.2rem;
+  vertical-align:middle;
+  font-size:0.85rem;
+}
+.cart-table td:last-child{text-align:right}
+
+.cart-product-info{
+  display:flex;
+  align-items:center;
+  gap:0.9rem;
+}
+.cart-thumb{
+  width:44px;
+  height:44px;
+  background:var(--warm);
+  border-radius:2px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.4rem;
+  flex-shrink:0;
+  border:1px solid var(--border);
+}
+.cart-product-name{
+  font-weight:500;
+  font-size:0.88rem;
+}
+.cart-product-cat{
+  font-size:0.68rem;
+  color:var(--ink2);
+  margin-top:2px;
+}
+
+.cart-qty-wrap{
+  display:flex;
+  align-items:center;
+  gap:0.4rem;
+}
+.cart-qty-btn{
+  width:26px;
+  height:26px;
+  border:1.5px solid var(--border);
+  background:var(--cream);
+  border-radius:2px;
+  cursor:pointer;
+  font-size:0.9rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.15s;
+  font-family:'DM Sans',sans-serif;
+}
+.cart-qty-btn:hover{border-color:var(--ink);background:var(--warm)}
+
+.cart-qty-num{
+  min-width:28px;
+  text-align:center;
+  font-weight:500;
+  font-size:0.88rem;
+}
+
+.cart-item-total{
+  font-weight:500;
+  color:var(--accent);
+}
+
+.delete-btn{
+  background:var(--red-light);
+  color:var(--red);
+  border:1px solid #f5c6c6;
+  border-radius:2px;
+  padding:0.35rem 0.8rem;
+  font-family:'DM Sans',sans-serif;
+  font-size:0.72rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:all 0.2s;
+  white-space:nowrap;
+}
+.delete-btn:hover{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* Cart footer */
+.cart-footer{
+  background:var(--warm);
+  padding:1.2rem 1.5rem;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-top:1px solid var(--border);
+  flex-wrap:wrap;
+  gap:1rem;
+}
+.cart-total-label{
+  font-size:0.72rem;
+  color:var(--ink2);
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+.cart-total-amount{
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem;
+  font-weight:700;
+  color:var(--ink);
+  margin-top:0.1rem;
+}
+
+.checkout-btn{
+  background:var(--green);
+  color:#fff;
+  border:none;
+  border-radius:2px;
+  padding:0.75rem 1.8rem;
+  font-family:'DM Sans',sans-serif;
+  font-size:0.85rem;
+  font-weight:500;
+  cursor:pointer;
+  transition:all 0.2s;
+  letter-spacing:0.02em;
+}
+.checkout-btn:hover{background:#226940;transform:translateY(-1px)}
+
+/* Toast */
+.toast{
+  position:fixed;
+  bottom:2rem;
+  right:2rem;
+  background:var(--ink);
+  color:var(--cream);
+  padding:0.8rem 1.3rem;
+  border-radius:3px;
+  font-size:0.8rem;
+  box-shadow:var(--shadow-lg);
+  z-index:9999;
+  transform:translateY(100px);
+  opacity:0;
+  transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  max-width:300px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left:4px solid var(--green)}
+.toast.danger{border-left:4px solid var(--red)}
+
+/* Checkout modal */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(28,23,18,0.6);
+  z-index:500;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.25s;
+}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal{
+  background:#fff;
+  border-radius:4px;
+  padding:2.5rem;
+  max-width:420px;
+  width:90%;
+  text-align:center;
+  transform:scale(0.9);
+  transition:transform 0.25s;
+  box-shadow:var(--shadow-lg);
+}
+.modal-overlay.show .modal{transform:scale(1)}
+.modal .modal-icon{font-size:3rem;margin-bottom:1rem}
+.modal h3{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:0.5rem}
+.modal p{font-size:0.82rem;color:var(--ink2);line-height:1.6;margin-bottom:1.5rem}
+.modal-close{
+  background:var(--ink);color:#fff;border:none;
+  padding:0.65rem 2rem;border-radius:2px;
+  font-family:'DM Sans',sans-serif;font-size:0.82rem;
+  cursor:pointer;transition:background 0.2s;
+}
+.modal-close:hover{background:var(--accent)}
+
+/* Responsive */
+@media(max-width:600px){
+  nav{padding:0 1rem}
+  .page-wrap{padding:1.5rem 1rem}
+  .cart-table td{padding:0.7rem 0.8rem}
+  .cart-table thead th{padding:0.6rem 0.8rem}
+}
+</style>
+</head>
+<body>
+
+<!-- â”€â”€ NAVBAR â”€â”€ -->
+<nav id="navbar">
+  <div class="logo">Shop<span>B2Wise</span></div>
+  <div class="nav-right">
+    <a class="cart-btn" href="#cart-section" id="nav-cart-btn">
+      ðŸ›’ Cart
+      <span class="cart-badge" id="cart-badge">0</span>
+    </a>
+  </div>
+</nav>
+
+<!-- â”€â”€ MAIN â”€â”€ -->
+<div class="page-wrap">
+
+  <!-- Products -->
+  <div class="section-head">
+    <h1>All Products</h1>
+    <span class="sub" id="product-count">8 items</span>
+  </div>
+
+  <div class="product-grid" id="product-grid">
+    <!-- Injected by JS -->
+  </div>
+
+  <!-- Cart -->
+  <div class="section-head">
+    <h1 id="cart-section">Shopping Cart</h1>
+    <span class="sub" id="cart-item-count">0 items</span>
+  </div>
+
+  <div class="cart-section">
+    <div class="cart-header">
+      <h2>Cart Summary</h2>
+      <button class="clear-all-btn" id="clear-all-btn" onclick="clearCart()">Clear All</button>
+    </div>
+    <div id="cart-body">
+      <div class="cart-empty" id="cart-empty">
+        <div class="empty-icon">ðŸ›’</div>
+        <p>Your cart is empty.<br/>Add some products above!</p>
+      </div>
+      <table class="cart-table" id="cart-table" style="display:none">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th style="text-align:right">Action</th>
+          </tr>
+        </thead>
+        <tbody id="cart-tbody"></tbody>
+      </table>
+    </div>
+    <div class="cart-footer" id="cart-footer" style="display:none">
+      <div>
+        <div class="cart-total-label">Order Total</div>
+        <div class="cart-total-amount" id="cart-total">$0.00</div>
+      </div>
+      <button class="checkout-btn" id="checkout-btn" onclick="checkout()">Proceed to Checkout â†’</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Checkout Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-icon">âœ…</div>
+    <h3>Order Placed!</h3>
+    <p id="modal-msg">Your order has been placed successfully. A confirmation email will be sent shortly.</p>
+    <button class="modal-close" onclick="closeModal()">Continue Shopping</button>
+  </div>
+</div>
+
+<script>
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// PRODUCTS DATA
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+const PRODUCTS = [
+  { id:'prod-001', name:'Wireless Headphones', category:'Electronics', price:89.99,  emoji:'ðŸŽ§', desc:'Over-ear noise cancelling, 30hr battery.' },
+  { id:'prod-002', name:'Mechanical Keyboard', category:'Electronics', price:129.00, emoji:'âŒ¨ï¸?', desc:'Tactile switches, RGB backlit, compact TKL.' },
+  { id:'prod-003', name:'Coffee Maker',        category:'Kitchen',     price:54.50,  emoji:'â˜•', desc:'12-cup programmable with auto-shutoff.' },
+  { id:'prod-004', name:'Running Shoes',       category:'Footwear',    price:74.95,  emoji:'ðŸ‘Ÿ', desc:'Lightweight mesh upper, cushioned sole.' },
+  { id:'prod-005', name:'Desk Lamp',           category:'Home',        price:34.99,  emoji:'ðŸ’¡', desc:'LED, adjustable arm, USB charging port.' },
+  { id:'prod-006', name:'Yoga Mat',            category:'Fitness',     price:29.00,  emoji:'ðŸ§˜', desc:'6mm thick, non-slip, eco-friendly TPE.' },
+  { id:'prod-007', name:'Backpack',            category:'Accessories', price:59.99,  emoji:'ðŸŽ’', desc:'30L waterproof, laptop compartment 15".' },
+  { id:'prod-008', name:'Smart Watch',         category:'Electronics', price:199.99, emoji:'âŒš', desc:'Heart rate, GPS, 7-day battery life.' },
+];
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// CART STATE
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+let cart = {}; // { productId: { product, qty } }
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// RENDER PRODUCTS
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+function renderProducts() {
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = PRODUCTS.map(p => `
+    <div class="product-card" id="card-${p.id}" data-product-id="${p.id}">
+      <div class="product-img">${p.emoji}</div>
+      <div class="product-info">
+        <div class="product-name" id="name-${p.id}">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-price" id="price-${p.id}">$${p.price.toFixed(2)}</div>
+      </div>
+      <div class="product-actions">
+        <div class="qty-wrap">
+          <button class="qty-btn" id="qty-dec-${p.id}" onclick="changeQty('${p.id}',-1)" aria-label="Decrease quantity">âˆ’</button>
+          <input  class="qty-input" id="qty-${p.id}" type="number" value="1" min="1" max="99"
+                  onchange="clampQty('${p.id}')" aria-label="Quantity for ${p.name}"/>
+          <button class="qty-btn" id="qty-inc-${p.id}" onclick="changeQty('${p.id}',1)"  aria-label="Increase quantity">+</button>
+        </div>
+        <button class="add-btn" id="add-btn-${p.id}" onclick="addToCart('${p.id}')"
+                data-testid="add-to-cart-${p.id}">Add to Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// QTY HELPERS
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+function changeQty(id, delta) {
+  const inp = document.getElementById(`qty-${id}`);
+  let val = parseInt(inp.value) || 1;
+  val = Math.max(1, Math.min(99, val + delta));
+  inp.value = val;
+}
+
+function clampQty(id) {
+  const inp = document.getElementById(`qty-${id}`);
+  let val = parseInt(inp.value) || 1;
+  inp.value = Math.max(1, Math.min(99, val));
+}
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// ADD TO CART
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+function addToCart(id) {
+  const product = PRODUCTS.find(p => p.id === id);
+  const qty     = parseInt(document.getElementById(`qty-${id}`).value) || 1;
+
+  if (cart[id]) {
+    cart[id].qty += qty;
+  } else {
+    cart[id] = { product, qty };
+  }
+
+  // Button flash
+  const btn = document.getElementById(`add-btn-${id}`);
+  btn.textContent = 'âœ“ Added';
+  btn.classList.add('added');
+  setTimeout(() => {
+    btn.textContent = 'Add to Cart';
+    btn.classList.remove('added');
+  }, 1200);
+
+  // Badge bump
+  const badge = document.getElementById('cart-badge');
+  badge.classList.remove('bump');
+  void badge.offsetWidth;
+  badge.classList.add('bump');
+
+  renderCart();
+  showToast(`âœ“ ${qty}Ã— ${product.name} added to cart`, 'success');
+}
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// RENDER CART
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+function renderCart() {
+  const items     = Object.values(cart);
+  const totalItems = items.reduce((s, i) => s + i.qty, 0);
+  const totalPrice = items.reduce((s, i) => s + i.product.price * i.qty, 0);
+
+  // Badge
+  document.getElementById('cart-badge').textContent    = totalItems;
+  document.getElementById('cart-item-count').textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+  document.getElementById('cart-total').textContent    = `$${totalPrice.toFixed(2)}`;
+
+  const empty  = document.getElementById('cart-empty');
+  const table  = document.getElementById('cart-table');
+  const footer = document.getElementById('cart-footer');
+  const tbody  = document.getElementById('cart-tbody');
+
+  if (items.length === 0) {
+    empty.style.display  = 'block';
+    table.style.display  = 'none';
+    footer.style.display = 'none';
+    return;
+  }
+
+  empty.style.display  = 'none';
+  table.style.display  = 'table';
+  footer.style.display = 'flex';
+
+  tbody.innerHTML = items.map(({ product: p, qty }) => `
+    <tr class="cart-row" id="cart-row-${p.id}" data-product-id="${p.id}">
+      <td>
+        <div class="cart-product-info">
+          <div class="cart-thumb">${p.emoji}</div>
+          <div>
+            <div class="cart-product-name" id="cart-name-${p.id}">${p.name}</div>
+            <div class="cart-product-cat">${p.category}</div>
+          </div>
+        </div>
+      </td>
+      <td id="cart-unit-price-${p.id}">$${p.price.toFixed(2)}</td>
+      <td>
+        <div class="cart-qty-wrap">
+          <button class="cart-qty-btn" id="cart-dec-${p.id}"
+                  onclick="updateCartQty('${p.id}',-1)" aria-label="Decrease">âˆ’</button>
+          <span class="cart-qty-num" id="cart-qty-${p.id}">${qty}</span>
+          <button class="cart-qty-btn" id="cart-inc-${p.id}"
+                  onclick="updateCartQty('${p.id}',1)" aria-label="Increase">+</button>
+        </div>
+      </td>
+      <td class="cart-item-total" id="cart-item-total-${p.id}">$${(p.price * qty).toFixed(2)}</td>
+      <td>
+        <button class="delete-btn" id="delete-btn-${p.id}"
+                onclick="removeFromCart('${p.id}')"
+                data-testid="delete-${p.id}">ðŸ—‘ Remove</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// UPDATE QTY IN CART
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+function updateCartQty(id, delta) {
+  if (!cart[id]) return;
+  cart[id].qty = Math.max(1, cart[id].qty + delta);
+  renderCart();
+}
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// REMOVE FROM CART
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+function removeFromCart(id) {
+  if (!cart[id]) return;
+  const name = cart[id].product.name;
+  const row  = document.getElementById(`cart-row-${id}`);
+  if (row) {
+    row.classList.add('removing');
+    setTimeout(() => {
+      delete cart[id];
+      renderCart();
+    }, 280);
+  } else {
+    delete cart[id];
+    renderCart();
+  }
+  showToast(`ðŸ—‘ ${name} removed from cart`, 'danger');
+}
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// CLEAR ALL
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+function clearCart() {
+  if (Object.keys(cart).length === 0) return;
+  cart = {};
+  renderCart();
+  showToast('ðŸ—‘ Cart cleared', 'danger');
+}
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// CHECKOUT
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+function checkout() {
+  const items  = Object.values(cart);
+  const total  = items.reduce((s, i) => s + i.product.price * i.qty, 0);
+  const count  = items.reduce((s, i) => s + i.qty, 0);
+  document.getElementById('modal-msg').textContent =
+    `${count} item(s) totalling $${total.toFixed(2)} â€” order confirmed! A confirmation will be sent shortly.`;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal() {
+  cart = {};
+  renderCart();
+  document.getElementById('modal-overlay').classList.remove('show');
+  showToast('âœ“ Thank you for your order!', 'success');
+}
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// TOAST
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+let toastTimer;
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className   = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+// INIT
+// â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?â•?
+renderProducts();
+renderCart();
+</script>
+</body>
+</html>
