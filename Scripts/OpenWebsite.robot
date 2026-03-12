@@ -14,12 +14,10 @@ Resource    ..//Framework//commonKeywords.robot
 Open ShopB2Wise
     [Tags]  Regression  Validation
     Set Selenium Speed    0.300
-    ${excel_dict}=    ConfigureTableFromExcelForALoop     ${Datafile}    Sheet1   0  #this is the row after the header in excel
+    ${excel_dict}=    ConfigureTableFromExcelForALoop     ${Datafile}    Addition   0  #this is the row after the header in excel
     FOR    ${row_index}    IN RANGE    0    ${excel_dict.row_count}
-        ConfigureTableFromExcelForALoop     ${Datafile}    Sheet1   ${row_index}
-        ${excel_dict}=    ConfigureTableFromExcelForALoop     ${Datafile}   Sheet1   ${row_index}
-        Set Global Variable    ${Global_index4}    ${row_index}
-        Set Global Variable    ${ReportSheet}    AddressValidation
+        ConfigureTableFromExcelForALoop     ${Datafile}    Addition   ${row_index}
+        ${excel_dict}=    ConfigureTableFromExcelForALoop     ${Datafile}   Addition   ${row_index}
         Run Keyword    OpenWebsite
         Run Keyword    Close Browser
     END

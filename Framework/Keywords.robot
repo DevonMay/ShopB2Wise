@@ -33,8 +33,7 @@ addProducts
     IF    '${sku}' == 'Wireless Headphones'
         ${price_text}=    Get Text    css:#price-prod-001
         Execute JavaScript    window.scrollTo(0, 0);
-
-        Click Quantity Buttons    css:#qty-inc-prod-001    ${qty}
+        Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-001    ELSE    Click Quantity Buttons    css:#qty-inc-prod-001    ${qty}
         Click Add To Cart    css:#add-btn-prod-001
         ${price}=    Convert Price Text To Number    ${price_text}
         ${headphones_total}=    Evaluate    ${headphones_total} + (${price} * ${qty})
@@ -44,7 +43,7 @@ addProducts
     ELSE IF    '${sku}' == 'Mechanical Keyboard'
         ${price_text}=    Get Text    css:#price-prod-002
         Execute JavaScript    window.scrollTo(0, 0);
-        Click Quantity Buttons    css:#qty-inc-prod-002    ${qty}
+        Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-002    ELSE    Click Quantity Buttons    css:#qty-inc-prod-002    ${qty}
         Click Add To Cart   css:#add-btn-prod-002
         ${price}=    Convert Price Text To Number    ${price_text}
         ${keyboard_total}=    Evaluate    ${keyboard_total} + (${price} * ${qty})
@@ -54,7 +53,7 @@ addProducts
     ELSE IF    '${sku}' == 'Coffee Maker'
         ${price_text}=    Get Text    css:#price-prod-003
         Execute JavaScript    window.scrollTo(0, 0);
-        Click Quantity Buttons    css:#qty-inc-prod-003    ${qty}
+        Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-003    ELSE    Click Quantity Buttons    css:#qty-inc-prod-003    ${qty}
         Click Add To Cart    css:#add-btn-prod-003
         ${price}=    Convert Price Text To Number    ${price_text}
         ${coffee_total}=    Evaluate    ${coffee_total} + (${price} * ${qty})
@@ -64,7 +63,7 @@ addProducts
     ELSE IF    '${sku}' == 'Running Shoes'
         ${price_text}=    Get Text    css:#price-prod-004
         Execute JavaScript    window.scrollTo(0, 0);
-        Click Quantity Buttons    css:#qty-inc-prod-004    ${qty}
+       Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-004    ELSE    Click Quantity Buttons    css:#qty-inc-prod-004    ${qty}
         Click Add To Cart    css:#add-btn-prod-004
         ${price}=    Convert Price Text To Number    ${price_text}
         ${shoes_total}=    Evaluate    ${shoes_total} + (${price} * ${qty})
@@ -73,7 +72,7 @@ addProducts
 
     ELSE IF    '${sku}' == 'Desk Lamp'
         ${price_text}=    Get Text    css:#price-prod-005
-        Click Quantity Buttons   css:#qty-inc-prod-005    ${qty}
+        Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-005    ELSE    Click Quantity Buttons    css:#qty-inc-prod-005    ${qty}
         Click Add To Cart    css:#add-btn-prod-005
         ${price}=    Convert Price Text To Number    ${price_text}
         ${lamp_total}=    Evaluate    ${lamp_total} + (${price} * ${qty})
@@ -82,7 +81,7 @@ addProducts
 
     ELSE IF    '${sku}' == 'Yoga Mat'
         ${price_text}=    Get Text    css:#price-prod-006
-        Click Quantity Buttons    css:#qty-inc-prod-006    ${qty}
+        Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-006    ELSE    Click Quantity Buttons    css:#qty-inc-prod-006    ${qty}
         Click Add To Cart    css:#add-btn-prod-006
         ${price}=    Convert Price Text To Number    ${price_text}
         ${yoga_total}=    Evaluate    ${yoga_total} + (${price} * ${qty})
@@ -91,7 +90,7 @@ addProducts
 
     ELSE IF    '${sku}' == 'Backpack'
         ${price_text}=    Get Text    css:#price-prod-007
-        Click Quantity Buttons    css:#qty-inc-prod-007    ${qty}
+        Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-007    ELSE    Click Quantity Buttons    css:#qty-inc-prod-007    ${qty}
         Click Add To Cart    css:#add-btn-prod-007
         ${price}=    Convert Price Text To Number    ${price_text}
         ${backpack_total}=    Evaluate    ${backpack_total} + (${price} * ${qty})
@@ -100,7 +99,7 @@ addProducts
 
     ELSE IF    '${sku}' == 'Smart Watch'
         ${price_text}=    Get Text    css:#price-prod-008
-        Click Quantity Buttons    css:#qty-inc-prod-008    ${qty}
+        Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-008    ELSE    Click Quantity Buttons    css:#qty-inc-prod-008    ${qty}
         Click Add To Cart    css:#add-btn-prod-008
         ${price}=    Convert Price Text To Number    ${price_text}
         ${watch_total}=    Evaluate    ${watch_total} + (${price} * ${qty})
@@ -115,10 +114,9 @@ addProducts
     # ----------------------------
     # Calculate combined total
     ${combined_total}=    Evaluate    round(${headphones_total} + ${keyboard_total} + ${coffee_total} + ${shoes_total} + ${lamp_total} + ${yoga_total} + ${backpack_total} + ${watch_total}, 2)
+    ${combined_total}=    Evaluate    "{:.2f}".format(${combined_total})
     Set Global Variable    ${combined_total}
     Log To Console    Combined Total of All Items: ${combined_total}
-
-
 
 RemoveFromBasketAction
     FOR    ${i}    IN RANGE    1    9
@@ -165,7 +163,7 @@ CartQtyExtract
     [Arguments]    ${position}
     ${qty_in_basket}=    Get Text    css:#cart-qty-prod-00${position}   # adjust locator
     Set Global Variable    ${qty_in_basket}
-##############################DELETION NOT USING UNDER
+
 CheckoutBtn
     Click Element    css:#checkout-btn
     Wait Until Element Is Visible    css:#modal-msg    20
@@ -191,6 +189,11 @@ Click Quantity Buttons
         Sleep    0.3
     END
 
+Click Quantity Once
+    [Arguments]    ${inc_css_selector}
+    Scroll Element Into View    ${inc_css_selector}
+
+
 Click Add To Cart
     [Arguments]    ${Add_css_selector}
     Click Element    ${Add_css_selector}
@@ -209,12 +212,17 @@ ValidateShoppingCartSummary
         END
     END
 
+   IF    ${total} == 1
+    ${expected_qty}=    Set Variable    ${total} item
+    ELSE
     ${expected_qty}=    Set Variable    ${total} items
+   END
     Set Global Variable    ${expected_global_qty}    ${total}
 
     ${cart_count}=    Get Text    css:#cart-item-count
-    ${cart_count}=    Strip String    ${cart_count}
+    #${cart_count}=    Strip String    ${cart_count}
     Set Global Variable    ${cart_count}
+
 
     Should Be Equal    ${cart_count}    ${expected_qty}
     Log To Console    Ui Cart: ${cart_count}
@@ -222,6 +230,85 @@ ValidateShoppingCartSummary
 
     #Scrolls to the cart summary bottom page
     Scroll Element Into View    css:#checkout-btn
+
+
+
+ValidateBasketAfterRemoval
+    FOR    ${i}    IN RANGE    1    9
+
+        ${sku}=    Set Variable    ${excel_dict["SKU${i}"]}
+        ${qty}=    Set Variable    ${excel_dict["Quantity${i}"]}
+        ${remove_qty}=    Set Variable    ${excel_dict["RemoveQty${i}"]}
+
+        IF    '${sku}' == 'NA'
+            CONTINUE
+        END
+
+        ${qty}=    Convert To Integer    ${qty}
+
+        IF    '${remove_qty}' != 'NA'
+            ${remove_qty}=    Convert To Integer    ${remove_qty}
+        ELSE
+            ${remove_qty}=    Set Variable    0
+        END
+
+        ${expected_remaining}=    Evaluate    ${qty} - ${remove_qty}
+
+        FOR    ${pos}    IN RANGE    1    9
+            ${exists}=    Run Keyword And Return Status    Element Should Be Visible    css:#cart-name-prod-00${pos}
+
+            IF    ${exists}
+
+                ${cart_name}=    Get Text    css:#cart-name-prod-00${pos}
+
+                IF    '${cart_name}' == '${sku}'
+
+                    IF    ${expected_remaining} <= 0
+                        Fail    ${sku} should have been removed but still exists in cart
+                    END
+
+                    ${ui_qty}=    Get Text    css:#cart-qty-prod-00${pos}
+                    ${ui_qty}=    Convert To Integer    ${ui_qty}
+
+                    Should Be Equal As Integers    ${ui_qty}    ${expected_remaining}
+
+                    Log To Console    ${sku} validated. Remaining Qty: ${ui_qty}
+
+                END
+            END
+        END
+
+        IF    ${expected_remaining} <= 0
+            Log To Console    ${sku} correctly removed from cart
+        END
+
+    END
+
+ValidateCart
+    ${deductedCart}=    Get Text    css:#cart-total
+    ${deductedItems}=    Get Text    css:#cart-item-count
+    ${deductedCart}=    Replace String    ${deductedCart}    $    ${EMPTY}
+    Log To Console    Cart Price after removal of items : ${deductedCart}
+    Log To Console    Cart Price before removal of items : ${combined_total}
+    Log To Console    Cart Items before removal of items : ${cart_count}
+    Log To Console    Cart Items after removal of items : ${deductedItems}
+
+    ${deductedItems}=    Strip String    ${deductedItems}               # remove spaces
+    ${deductedItems}=    Replace String    ${deductedItems}    items    ${EMPTY}  # remove 'items'
+    #${deductedItems}=    Convert To Integer    ${deductedItems}         # now you have 12
+
+# If cart is completely empty
+    IF    '${deductedItems}' == '0'
+        Should Be Equal    ${deductedItems}    0
+        Log To Console    Cart is completely empty. Totals are 0.
+    ELSE
+        # Normal scenario: totals/items changed but not zero
+
+        Should Not Be Equal    ${deductedCart}    ${combined_total}
+        Should Not Be Equal    ${cart_count}    ${deductedItems}
+        Log To Console    Cart totals before removal : $ ${combined_total} with ${cart_count}, after removal : $ ${deductedCart} with ${deductedItems} items remaining. updated correctly after removal.
+    END
+
 
 
 AdditionOfProducts
@@ -238,3 +325,6 @@ DeletionOfProducts
     ValidateShoppingCartSummary
     Sleep    5
     RemoveFromBasketAction
+    Sleep    5
+    ValidateBasketAfterRemoval
+    ValidateCart

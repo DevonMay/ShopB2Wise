@@ -4,15 +4,14 @@ Library     OperatingSystem
 Library     SeleniumLibrary
 Library     RequestsLibrary
 Library     RPA.Excel.Files
-Library     DynamicTestCases.py
 Resource    ..//Framework//Keywords.robot
 Resource    ..//Framework//Variable.robot
 Resource    ..//Framework//DataFileConfig.robot
-Resource    ..//Framework//commonKeywords.robot
+
 
 *** Test Cases ***
 Delete Products From Basket
-    [Tags]  Regression  Validation
+    [Tags]  Regression  Deletion
     Set Selenium Speed    0.300
     ${excel_dict}=    ConfigureTableFromExcelForALoop     ${Datafile}    Deletion   0  #this is the row after the header in excel
     FOR    ${row_index}    IN RANGE    0    ${excel_dict.row_count}
