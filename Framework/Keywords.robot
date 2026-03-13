@@ -14,7 +14,7 @@ Resource    DataFileConfig.robot
 #Script logic/ keywords below
 OpenWebsite
     Open Local HTML And Maximize
-    Title Should Be    ShopB2Wise — Robot Framework Demo Store  #Validates that the browsers title is correct 
+    Title Should Be    ShopB2Wise — Robot Framework Demo Store  #Validates that the browsers title is correct
     ${text}=    Get Text    css:#navbar .logo span    #extracts the text from logo class and stores it to a variable
     Should Be Equal As Strings    ${text.strip()}    B2Wise    #uses extracted text stored into variable and validates that it should be equal as expected text
     Log To Console       Website Name: ${text}    #Prints variable to console
@@ -32,79 +32,49 @@ addProducts
     # ----------------------------
     # Massive IF/ELSE block
     IF    '${sku}' == 'Wireless Headphones'
-        ${price_text}=    Get Text    css:#price-prod-001
         Execute JavaScript    window.scrollTo(0, 0);
         Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-001    ELSE    Click Quantity Buttons    css:#qty-inc-prod-001    ${qty}
         Click Add To Cart    css:#add-btn-prod-001
-        ${price}=    Convert Price Text To Number    ${price_text}
-        ${headphones_total}=    Evaluate    ${headphones_total} + (${price} * ${qty})
-        Set Suite Variable    ${headphones_total}
         Log To Console    Wireless Headphones Total: ${headphones_total}
 
     ELSE IF    '${sku}' == 'Mechanical Keyboard'
-        ${price_text}=    Get Text    css:#price-prod-002
         Execute JavaScript    window.scrollTo(0, 0);
         Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-002    ELSE    Click Quantity Buttons    css:#qty-inc-prod-002    ${qty}
         Click Add To Cart   css:#add-btn-prod-002
-        ${price}=    Convert Price Text To Number    ${price_text}
-        ${keyboard_total}=    Evaluate    ${keyboard_total} + (${price} * ${qty})
-        Set Suite Variable    ${keyboard_total}
         Log To Console    Mechanical Keyboard Total: ${keyboard_total}
 
     ELSE IF    '${sku}' == 'Coffee Maker'
-        ${price_text}=    Get Text    css:#price-prod-003
         Execute JavaScript    window.scrollTo(0, 0);
         Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-003    ELSE    Click Quantity Buttons    css:#qty-inc-prod-003    ${qty}
         Click Add To Cart    css:#add-btn-prod-003
-        ${price}=    Convert Price Text To Number    ${price_text}
-        ${coffee_total}=    Evaluate    ${coffee_total} + (${price} * ${qty})
-        Set Suite Variable    ${coffee_total}
         Log To Console    Coffee Maker Total: ${coffee_total}
 
     ELSE IF    '${sku}' == 'Running Shoes'
-        ${price_text}=    Get Text    css:#price-prod-004
         Execute JavaScript    window.scrollTo(0, 0);
-       Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-004    ELSE    Click Quantity Buttons    css:#qty-inc-prod-004    ${qty}
+        Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-004    ELSE    Click Quantity Buttons    css:#qty-inc-prod-004    ${qty}
         Click Add To Cart    css:#add-btn-prod-004
-        ${price}=    Convert Price Text To Number    ${price_text}
-        ${shoes_total}=    Evaluate    ${shoes_total} + (${price} * ${qty})
-        Set Suite Variable    ${shoes_total}
         Log To Console    Running Shoes Total: ${shoes_total}
 
     ELSE IF    '${sku}' == 'Desk Lamp'
-        ${price_text}=    Get Text    css:#price-prod-005
         Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-005    ELSE    Click Quantity Buttons    css:#qty-inc-prod-005    ${qty}
         Click Add To Cart    css:#add-btn-prod-005
-        ${price}=    Convert Price Text To Number    ${price_text}
-        ${lamp_total}=    Evaluate    ${lamp_total} + (${price} * ${qty})
-        Set Suite Variable    ${lamp_total}
         Log To Console    Desk Lamp Total: ${lamp_total}
 
     ELSE IF    '${sku}' == 'Yoga Mat'
-        ${price_text}=    Get Text    css:#price-prod-006
+
         Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-006    ELSE    Click Quantity Buttons    css:#qty-inc-prod-006    ${qty}
         Click Add To Cart    css:#add-btn-prod-006
-        ${price}=    Convert Price Text To Number    ${price_text}
-        ${yoga_total}=    Evaluate    ${yoga_total} + (${price} * ${qty})
-        Set Suite Variable    ${yoga_total}
+
         Log To Console    Yoga Mat Total: ${yoga_total}
 
     ELSE IF    '${sku}' == 'Backpack'
-        ${price_text}=    Get Text    css:#price-prod-007
         Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-007    ELSE    Click Quantity Buttons    css:#qty-inc-prod-007    ${qty}
         Click Add To Cart    css:#add-btn-prod-007
-        ${price}=    Convert Price Text To Number    ${price_text}
-        ${backpack_total}=    Evaluate    ${backpack_total} + (${price} * ${qty})
-        Set Suite Variable    ${backpack_total}
         Log To Console    Backpack Total: ${backpack_total}
 
     ELSE IF    '${sku}' == 'Smart Watch'
-        ${price_text}=    Get Text    css:#price-prod-008
         Run Keyword If    '${qty}' == '1'    Click Quantity Once    css:#qty-inc-prod-008    ELSE    Click Quantity Buttons    css:#qty-inc-prod-008    ${qty}
         Click Add To Cart    css:#add-btn-prod-008
-        ${price}=    Convert Price Text To Number    ${price_text}
-        ${watch_total}=    Evaluate    ${watch_total} + (${price} * ${qty})
-        Set Suite Variable    ${watch_total}
         Log To Console    Smart Watch Total: ${watch_total}
 
     ELSE
@@ -112,12 +82,6 @@ addProducts
         RETURN
     END
 
-    # ----------------------------
-    # Calculate combined total
-    ${combined_total}=    Evaluate    round(${headphones_total} + ${keyboard_total} + ${coffee_total} + ${shoes_total} + ${lamp_total} + ${yoga_total} + ${backpack_total} + ${watch_total}, 2)
-    ${combined_total}=    Evaluate    "{:.2f}".format(${combined_total})
-    Set Global Variable    ${combined_total}
-    Log To Console    Combined Total of All Items: ${combined_total}
 
 RemoveFromBasketAction
     FOR    ${i}    IN RANGE    1    9
@@ -165,7 +129,13 @@ CartQtyExtract
     ${qty_in_basket}=    Get Text    css:#cart-qty-prod-00${position}   # adjust locator
     Set Global Variable    ${qty_in_basket}
 
-CheckoutBtn
+CheckoutBtn2
+   # Calculate combined total
+  # ${combined_total}=    Evaluate    round(${headphones_total} + ${keyboard_total} + ${coffee_total} + ${shoes_total} + ${lamp_total} + ${yoga_total} + ${backpack_total} + ${watch_total}, 2)
+    #${combined_total}=    Evaluate    "{:.2f}".format(${combined_total})
+    #Set Global Variable    ${combined_total}
+   # Log To Console    Combined Total of All Items: ${combined_total}
+
     Click Element    css:#checkout-btn
     Wait Until Element Is Visible    css:#modal-msg    20
     ${modal-msg}=    Get Text    css:#modal-msg
@@ -175,6 +145,51 @@ CheckoutBtn
     Log To Console    Order confirmation message : ${modal-msg}
     Log To Console    Order confirmation message Text : ${expected_msg}
 
+CheckoutBtn
+    ${combined_total}=    Set Variable    0
+
+    # ----------------------------
+    # Get all quantity elements dynamically
+    ${qty_elements}=    Get WebElements    xpath=//span[starts-with(@id,'cart-qty-prod-')]
+
+    FOR    ${qty_elem}    IN    @{qty_elements}
+        ${qty_text}=    Get Text    ${qty_elem}
+        ${qty}=         Convert To Number    ${qty_text}
+
+        Run Keyword If    ${qty} == 0    Continue For Loop
+
+        # Extract the product ID from the qty element's ID
+        ${qty_id}=       Get Element Attribute    ${qty_elem}    id
+        ${prod_id}=      Replace String    ${qty_id}    cart-qty-    cart-unit-price-
+
+        # Get corresponding unit price
+        ${price_text}=   Get Text    css:#${prod_id}
+        ${price}=        Convert Price Text To Number    ${price_text}
+
+        # Calculate total and add to combined
+        ${total}=        Evaluate    round(${qty} * ${price}, 2)
+        ${combined_total}=    Evaluate    round(${combined_total} + ${total}, 2)
+        Log To Console    Product ${prod_id} Total: ${total}
+    END
+
+    # ----------------------------
+    # Final combined total
+    ${combined_total}=    Evaluate    "{:.2f}".format(${combined_total})
+    Set Global Variable    ${combined_total}
+    Log To Console    Combined Total of All Items: ${combined_total}
+
+    # ----------------------------
+    # Proceed to checkout
+    Click Element    css:#checkout-btn
+    Wait Until Element Is Visible    css:#modal-msg    20
+    ${modal-msg}=    Get Text    css:#modal-msg
+
+    # ----------------------------
+    # Verify confirmation message
+    ${expected_msg}=    Set Variable    ${expected_global_qty} item(s) totalling $${combined_total} — order confirmed! A confirmation will be sent shortly.
+    Should Be Equal    ${modal-msg}    ${expected_msg}
+    Log To Console    Order confirmation message : ${modal-msg}
+    Log To Console    Order confirmation message Text : ${expected_msg}
 
 Convert Price Text To Number
     [Arguments]    ${price_text}
@@ -198,7 +213,7 @@ Click Quantity Once
 Click Add To Cart
     [Arguments]    ${Add_css_selector}
     Click Element    ${Add_css_selector}
-    
+
 
 ValidateShoppingCartSummary
     #Calculates that the total Quantity amount matches
@@ -288,6 +303,7 @@ ValidateBasketAfterRemoval
 ValidateCart
     ${deductedCart}=    Get Text    css:#cart-total
     ${deductedItems}=    Get Text    css:#cart-item-count
+    ${combined_total}=    Get Text    css:#cart-total
     ${deductedCart}=    Replace String    ${deductedCart}    $    ${EMPTY}
     Log To Console    Cart Price after removal of items : ${deductedCart}
     Log To Console    Cart Price before removal of items : ${combined_total}
@@ -296,19 +312,27 @@ ValidateCart
 
     ${deductedItems}=    Strip String    ${deductedItems}               # remove spaces
     ${deductedItems}=    Replace String    ${deductedItems}    items    ${EMPTY}  # remove 'items'
+    ${deductedItems}=    Convert To Number    ${deductedItems}
+    ${deductedItems}=    Convert To Integer   ${deductedItems}   # now it’s 0
 
+
+    ${expectedAmount}=    Set Variable    0
+    ${expectedAmount}=    Convert To Integer   ${expectedAmount}   # now it’s 0
 
 # If cart is completely empty
-    IF    '${deductedItems}' == '0'
-        Should Be Equal    ${deductedItems}    0
+    IF    ${deductedItems} == ${expectedAmount}
+        Should Be Equal    ${deductedItems}    ${expectedAmount}
         Log To Console    Cart is completely empty. Totals are 0.
     ELSE
         # Normal scenario: totals/items changed but not zero
-
         Should Not Be Equal    ${deductedCart}    ${combined_total}
         Should Not Be Equal    ${cart_count}    ${deductedItems}
         Log To Console    Cart totals before removal : $ ${combined_total} with ${cart_count}, after removal : $ ${deductedCart} with ${deductedItems} items remaining. updated correctly after removal.
     END
+
+
+
+
 
 
 #Script flow/ Sequence below
