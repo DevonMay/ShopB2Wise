@@ -11,6 +11,7 @@ Resource    DataFileConfig.robot
 
 
 *** Keywords ***
+#Script logic/ keywords below
 OpenWebsite
     Open Local HTML And Maximize
     Title Should Be    ShopB2Wise — Robot Framework Demo Store  #Validates that the browsers title is correct 
@@ -295,7 +296,7 @@ ValidateCart
 
     ${deductedItems}=    Strip String    ${deductedItems}               # remove spaces
     ${deductedItems}=    Replace String    ${deductedItems}    items    ${EMPTY}  # remove 'items'
-    #${deductedItems}=    Convert To Integer    ${deductedItems}         # now you have 12
+
 
 # If cart is completely empty
     IF    '${deductedItems}' == '0'
@@ -310,7 +311,7 @@ ValidateCart
     END
 
 
-
+#Script flow/ Sequence below
 AdditionOfProducts
     OpenWebsite
     AddToBasketAction
